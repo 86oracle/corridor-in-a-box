@@ -7,6 +7,23 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) once it reache
 
 ## [Unreleased]
 
+### Docs — web/README: three liveness states, the sixth docs page, and the post-#80 workspace (#126) (2026-09-26)
+
+`web/README.md` was stale in the three places [#126](https://github.com/ezedike-evan/corridor-in-a-box/issues/126) names:
+
+- The dashboard's build-time liveness is **three** states — `verified`,
+  `unverified`, `not runnable` — and only `verified` counts as runnable
+  (`web/lib/corridors.ts`, `liveness()`), not the "runnable / not runnable" pair
+  the README described.
+- The docs list now names all six pages, including "Why not Anchor Platform?"
+  (`web/lib/docs.ts`).
+- Since [build(web): make web/ its own pnpm workspace root #80](https://github.com/ezedike-evan/corridor-in-a-box/pull/80),
+  `web/` is its own pnpm workspace root (`web/pnpm-workspace.yaml`) with its own
+  lockfile, gated by its own CI job (typecheck + build) — it is not a project
+  that merely sits "not part of the pnpm workspace".
+
+The `Develop` commands are unchanged and were run as written from a clean clone.
+
 ### Maintenance — ESLint 10 landed
 
 - `eslint` 10 landed in [#37](https://github.com/ezedike-evan/corridor-in-a-box/pull/37).
