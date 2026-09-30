@@ -696,7 +696,9 @@ describe("engine recovery", () => {
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error.code).toBe("RECONCILE_MISMATCH");
     expect(polls).toBe(1); // bailed on the first status, did not poll to timeout
-    expect(refunded).toHaveLength(1); // and reversed the on-chain payment
+    // The anchor is already refunding: the run parks in refund_pending and the
+    // engine does not ask the chain to reverse the payment (#171).
+    expect(refunded).toHaveLength(0);
   });
 
   it("escalates a REFUND_UNSUPPORTED refund to held (fail-closed refund path)", async () => {
