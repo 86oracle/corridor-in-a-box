@@ -7,6 +7,23 @@ follow [Semantic Versioning](https://semver.org/spec/v2.0.0.html) once it reache
 
 ## [Unreleased]
 
+### Fixed — operations.md §1 step 4 described output a reader could never see (closes #129)
+
+`docs/operations.md` step 4 instructed readers to run
+`pnpm cli plan corridors/reference.corridor.yaml` and said it "must report the lane
+runnable (no liveness warnings)". The reference corridor points at `localhost` and
+has no `endpoints_verified_at` by design — setting that field on a localhost manifest
+would be meaningless — so `plan` always prints `UNVERIFIED` plus a warning about
+unconfirmed endpoints. Step 4 was therefore impossible to pass as written, which
+stopped readers dead.
+
+The step now shows the actual expected output and explains what the pre-flight is
+really checking: that the manifest parses (exit 0), that liveness is **not** `NOT
+RUNNABLE` (all required endpoint fields are present), and that it is **not**
+`✓ VERIFIED` (a localhost manifest reporting verified would be the lie to catch).
+The live readiness check — containers up, SEP-31 receiving, observer cursor in range
+— is `reference-anchor.sh doctor`, and the step now points there explicitly.
+
 ### Changed — anchor-side terminal failure after settle enters `refund_pending`
 
 - Under `rollback: refund_sender`, when money has moved and the anchor reports a
