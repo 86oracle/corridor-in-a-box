@@ -76,6 +76,25 @@ contract itself rejected the attestation, the error carries its number as
 The error `code` and message text are unchanged, so existing callers keep
 working.
 
+### Added — `verifying` state between `opened` and `settling` (2026-09-25)
+
+The engine moved straight from `opened` to `settling`, so a pre-settle gate done
+inside `opened` would have been invisible in the trail — `opened -> failed` could
+mean either "the anchor rejected the open" or "we refused to pay" — and it would
+have run only once, while a retry re-entered `settling` after a backoff during
+which balances, quote validity and anchor status can all change.
+
+`verifying` makes the gate an auditable fact and, more importantly, an
+unskippable one. `settling` is now reachable ONLY from `verifying`, so a
+control-flow bug in `run.ts` cannot bypass it — the same "unreachable by
+construction" argument the recovery states already make. `opened` and `retrying`
+lost their direct edges into `settling`; every attempt walks
+`opened -> verifying -> settling` on the first pass and
+`retrying -> verifying -> settling` after a retry. A refusal is `failed`, never
+`recovering`, because no money has moved and there is nothing to unwind. The
+state and engine wiring shipped with the pre-settle gate (#353); this entry adds
+the property tests that pin the invariant (#138).
+
 ### Added — Gate check: balance covers amount, fee and minimum reserve (#151) (2026-09-25)
 
 Added `balanceCheck(inspector, signerPublicKey, opts?)` GateCheck (name `chain.balance`) in `@corridor/stellar`:

@@ -45,7 +45,7 @@ See [CONTRIBUTING](./CONTRIBUTING.md), [SECURITY](./SECURITY.md), and the
 `pnpm example` walks a payment through every state and proves idempotency:
 
 ```
-created -> quoted -> compliant -> opened -> settling -> settled -> reconciled -> completed
+created -> quoted -> compliant -> opened -> verifying -> settling -> settled -> reconciled -> completed
 replay with same key -> idempotent return (state=completed)
 ```
 
